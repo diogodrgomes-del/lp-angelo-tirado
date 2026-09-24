@@ -26,7 +26,7 @@ var MEDICAO = {
        Vazio = aquele clique nao vira conversao no Ads (continua sendo
        medido no GA4 normalmente).                                   */
   CONVERSOES_ADS: {
-    clique_whatsapp:     '',   /* a principal: agendamento          */
+    clique_whatsapp:     'zq5SCNGJ-oIdELzNy-VE',   /* a principal: agendamento          */
     clique_como_chegar:  '',
     clique_catalogo:     '',
     clique_instagram:    ''
