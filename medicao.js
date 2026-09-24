@@ -18,7 +18,7 @@ var MEDICAO = {
        (Google Ads > Metas > Conversoes > a conversao > Configurar tag
         > "Instalar a tag voce mesmo": e o valor depois de send_to,
         antes da barra)                                              */
-  GOOGLE_ADS: '',
+  GOOGLE_ADS: 'AW-18466662076',
 
   /* ▸ ROTULOS DE CONVERSAO DO GOOGLE ADS — a parte DEPOIS da barra em
        send_to: 'AW-XXXXXXXXXX/ESTE_PEDACO'. Crie uma conversao no Ads
