@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Antes e depois · Dr. Angelo Tirado</title>
+<meta name="description" content="Antes e depois de implantes, prótese, harmonização orofacial e facetas — Dr. Angelo Tirado, cirurgião-dentista em Londrina/PR.">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0a'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-style='italic' font-size='38' fill='%23d4af5f' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="fontes.css">
+<link rel="stylesheet" href="base.css">
+
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   ▸▸ COMO COLOCAR AS FOTOS ◂◂
+
+   Cada procedimento tem a sua pasta dentro de  fotos/ :
+
+      fotos/implantes/   fotos/protese/   fotos/hof/   fotos/facetas/
+
+   Dentro dela, numere as fotos em sequencia:  1.jpg, 2.jpg, 3.jpg ...
+   (tambem aceita .jpeg, .png e .webp). A pagina encontra sozinha —
+   nao precisa mexer em codigo. A foto 1 vira a capa da pasta.
+   Pulou um numero? A galeria para ali: 1, 2, 4 mostra so a 1 e a 2.
+
+   Pasta vazia mostra "Em breve" — nada quebra.
+   ══════════════════════════════════════════════════════════════════ */
+
+.pagina{
+  position:relative;
+  min-height:100dvh;
+  width:min(100%,32em);
+  margin-inline:auto;
+  padding:
+    calc(1.5em + env(safe-area-inset-top))
+    1.5em
+    calc(1.6em + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:1.4em;
+  font-size:clamp(14px, 4.1vw, 17px);
+}
+
+/* ── topo ──────────────────────────────────────────────────────── */
+.voltar{
+  align-self:flex-start;
+  display:inline-flex;align-items:center;gap:.45em;
+  padding:.5em .2em;
+  font-size:.7em;font-weight:300;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cinza);
+  transition:color .3s var(--curva);
+}
+.voltar svg{color:var(--ouro);transition:transform .3s var(--curva)}
+@media (hover:hover){
+  .voltar:hover{color:var(--ouro-luz)}
+  .voltar:hover svg{transform:translateX(-3px)}
+}
+
+.cabeca{text-align:center}
+.cabeca .sobre{
+  display:flex;align-items:center;justify-content:center;gap:.85em;
+  font-size:.62em;font-weight:300;
+  letter-spacing:.38em;text-indent:.38em;text-transform:uppercase;
+  color:var(--cinza);white-space:nowrap;
+}
+.cabeca .sobre .fio{
+  height:1px;flex:1;max-width:2.6em;
+  background:linear-gradient(90deg,transparent,var(--ouro));
+}
+.cabeca .sobre .fio:last-child{background:linear-gradient(90deg,var(--ouro),transparent)}
+.cabeca h1{
+  margin-top:.3em;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:300;font-size:2.5em;line-height:1.05;
+  color:#fff;
+}
+.cabeca .apoio{
+  margin-top:.35em;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;font-size:1.12em;
+  background:var(--folha);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* ── pastas ────────────────────────────────────────────────────── */
+.grade-pastas{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75em;
+}
+.pasta{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  aspect-ratio:4/5;
+  padding:1em .95em;
+  border-radius:1em;
+  border:1px solid rgba(212,175,95,.4);
+  background:
+    radial-gradient(90% 60% at 50% 20%, rgba(212,175,95,.12), transparent 70%),
+    linear-gradient(160deg,#1c1b19,#0f0e0d);
+  box-shadow:0 .4em 1.4em rgba(0,0,0,.5);
+  text-align:left;
+  transition:transform .35s var(--curva),border-color .35s var(--curva);
+}
+.pasta .capa{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;
+  transition:transform .6s var(--curva);
+}
+/* escurece a base da capa para o nome continuar legivel */
+.pasta::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 35%,rgba(10,10,10,.92) 100%);
+  pointer-events:none;
+}
+.pasta .icone{
+  position:absolute;top:50%;left:50%;translate:-50% -72%;
+  width:36%;height:auto;color:rgba(212,175,95,.55);
+}
+.pasta.com-capa .icone{display:none}
+.pasta .texto{position:relative;z-index:1}
+.pasta .nome{
+  display:block;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:1.55em;font-weight:400;line-height:1.05;color:#fff;
+}
+.pasta .sub{
+  display:block;margin-top:.25em;
+  font-size:.6em;font-weight:300;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cinza);line-height:1.35;
+}
+.pasta .ver{
+  display:inline-flex;align-items:center;gap:.4em;margin-top:.7em;
+  font-size:.6em;font-weight:400;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ouro);
+}
+@media (hover:hover){
+  .pasta:hover{transform:translateY(-3px);border-color:var(--ouro)}
+  .pasta:hover .capa{transform:scale(1.05)}
+}
+.pasta:active{transform:scale(.98)}
+
+/* ── galeria ───────────────────────────────────────────────────── */
+.galeria{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55em;
+}
+.galeria button{
+  all:unset;cursor:zoom-in;
+  position:relative;display:block;
+  aspect-ratio:1;border-radius:.7em;overflow:hidden;
+  border:1px solid rgba(212,175,95,.34);
+  background:linear-gradient(140deg,#1c1b19,#0f0e0d);
+  transition:border-color .35s var(--curva),transform .35s var(--curva);
+  animation:surge .8s var(--curva) both;
+}
+.galeria button:focus-visible{outline:2px solid var(--ouro);outline-offset:3px}
+.galeria img{width:100%;height:100%;object-fit:cover;display:block}
+@media (hover:hover){
+  .galeria button:hover{border-color:var(--ouro);transform:translateY(-2px)}
+}
+
+.vazio{
+  text-align:center;
+  padding:2.4em 1.2em;
+  border:1px dashed rgba(212,175,95,.35);border-radius:1em;
+  background:rgba(243,238,228,.03);
+}
+.vazio[hidden]{display:none}
+.vazio .titulo{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;font-size:1.5em;
+  background:var(--folha);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.vazio p{
+  margin-top:.5em;
+  font-size:.78em;font-weight:300;line-height:1.55;color:var(--cinza);
+}
+
+/* ── fim da pagina ─────────────────────────────────────────────── */
+.fim{margin-top:auto;display:flex;flex-direction:column;gap:1.1em;text-align:center}
+.fim .chamada{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;font-size:1.15em;color:var(--creme);
+}
+.fim .principal{font-size:.92em}
+
+/* ── visualizador em tela cheia ────────────────────────────────── */
+.visor{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(5,5,5,.94);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s var(--curva);
+  touch-action:pan-y;
+}
+.visor.aberto{opacity:1;pointer-events:auto}
+.visor img{
+  max-width:calc(100% - 2rem);
+  max-height:calc(100dvh - 7rem);
+  border-radius:.6rem;
+  border:1px solid rgba(212,175,95,.4);
+  box-shadow:0 1rem 3rem rgba(0,0,0,.7);
+  user-select:none;-webkit-user-drag:none;
+}
+.visor button{
+  all:unset;cursor:pointer;position:absolute;
+  display:flex;align-items:center;justify-content:center;
+  width:2.9rem;height:2.9rem;border-radius:50%;
+  border:1px solid rgba(212,175,95,.5);
+  background:rgba(10,10,10,.7);color:var(--ouro-luz);
+}
+.visor button:focus-visible{outline:2px solid var(--ouro);outline-offset:3px}
+.visor .fechar{top:calc(1rem + env(safe-area-inset-top));right:1rem}
+.visor .ant{left:.75rem;top:50%;translate:0 -50%}
+.visor .prox{right:.75rem;top:50%;translate:0 -50%}
+.visor .contador{
+  position:absolute;bottom:calc(1.4rem + env(safe-area-inset-bottom));left:0;right:0;
+  text-align:center;
+  font-size:.7rem;font-weight:300;letter-spacing:.25em;color:var(--cinza);
+}
+.visor.unica .ant,.visor.unica .prox,.visor.unica .contador{display:none}
+
+[hidden]{display:none!important}
+</style>
+</head>
+
+<body>
+
+<div class="camada" id="luz"     aria-hidden="true"></div>
+<div class="camada" id="halo"    aria-hidden="true"></div>
+<div class="camada" id="grao"    aria-hidden="true"></div>
+<div class="camada" id="moldura" aria-hidden="true"></div>
+
+<main class="pagina">
+
+  <!-- ── tela 1: as pastas ─────────────────────────────────────── -->
+  <section id="telaPastas">
+    <div style="display:flex;flex-direction:column;gap:1.4em">
+      <a class="voltar entra" style="--d:0" href="index.html">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg>
+        Início
+      </a>
+
+      <header class="cabeca entra" style="--d:80">
+        <p class="sobre"><span class="fio"></span>Dr. Angelo Tirado<span class="fio"></span></p>
+        <h1>Antes e depois</h1>
+        <p class="apoio">Escolha um procedimento</p>
+      </header>
+
+      <nav class="grade-pastas entra" style="--d:200" id="gradePastas"
+           aria-label="Procedimentos"></nav>
+    </div>
+  </section>
+
+  <!-- ── tela 2: dentro de uma pasta ───────────────────────────── -->
+  <section id="telaGaleria" hidden>
+    <div style="display:flex;flex-direction:column;gap:1.4em">
+      <a class="voltar" href="#">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg>
+        Procedimentos
+      </a>
+
+      <header class="cabeca">
+        <p class="sobre"><span class="fio"></span>Antes e depois<span class="fio"></span></p>
+        <h1 id="galeriaTitulo"></h1>
+        <p class="apoio" id="galeriaSub"></p>
+      </header>
+
+      <div class="galeria" id="galeria"></div>
+
+      <div class="vazio" id="vazio" hidden>
+        <p class="titulo">Em breve</p>
+        <p>Novos casos deste procedimento estão sendo preparados.<br>
+           Quer ver outros resultados? Chame no WhatsApp.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="fim entra" style="--d:320">
+    <p class="chamada">Agende sua avaliação com o Dr. Angelo.</p>
+
+    <!-- mesmo link do botao do WhatsApp em index.html -->
+    <a class="botao principal" id="btZap"
+       href="https://wa.me/5543988053476?text=Ol%C3%A1%21%20Vi%20os%20antes%20e%20depois%20e%20gostaria%20de%20agendar%20uma%20avalia%C3%A7%C3%A3o."
+       target="_blank" rel="noopener"
+       aria-label="Agendar avaliação pelo WhatsApp">
+      <span class="linha">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.02h-.01c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.2.84.85-3.12-.2-.32a8.2 8.2 0 0 1-1.26-4.15c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.1-8.04 8.1Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.41-.42-.56-.43l-.48-.01c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.06s.89 2.39 1.01 2.56c.12.16 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/>
+        </svg>
+        <span class="rotulo">Agendar no WhatsApp</span>
+      </span>
+    </a>
+
+    <p class="rodape">Clínica Odontológica · Londrina/PR
+      <!-- Mesmo CRO do rodape de index.html. Vazio, a linha some. -->
+      <span class="cro"></span>
+      <a class="assinatura" href="https://www.instagram.com/agenciamarktiva"
+         target="_blank" rel="noopener">Site feito por <b>Marktiva</b></a>
+    </p>
+  </div>
+
+</main>
+
+<div class="visor" id="visor" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <img id="visorImg" alt="">
+  <button class="fechar" id="visorFechar" aria-label="Fechar">
+    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+  </button>
+  <button class="ant" id="visorAnt" aria-label="Foto anterior">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg>
+  </button>
+  <button class="prox" id="visorProx" aria-label="Próxima foto">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>
+  </button>
+  <p class="contador" id="visorContador"></p>
+</div>
+
+<script src="medicao.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════════════════
+     ▸ OS PROCEDIMENTOS — a ordem aqui e a ordem na tela.
+       pasta = nome da pasta dentro de fotos/ (e o endereco: #implantes)
+     ══════════════════════════════════════════════════════════════════ */
+  var PROCEDIMENTOS = [
+    { pasta: 'implantes', nome: 'Implantes' },
+    { pasta: 'protese',   nome: 'Prótese' },
+    { pasta: 'hof',       nome: 'HOF', sub: 'Harmonização Orofacial' },
+    { pasta: 'facetas',   nome: 'Facetas' }
+  ];
+
+  var EXTENSOES = ['jpg', 'jpeg', 'png', 'webp'];
+  var LIMITE = 60;
+
+  medir('btZap', 'Contact', true);
+
+  /* tenta n.jpg, n.jpeg, n.png, n.webp — devolve a primeira que abrir */
+  function acharFoto(pasta, n, pronto) {
+    var i = 0;
+    (function tentar() {
+      if (i >= EXTENSOES.length) return pronto(null);
+      var img = new Image();
+      img.decoding = 'async';
+      img.onload = function () { pronto(img); };
+      img.onerror = function () { i++; tentar(); };
+      img.src = 'fotos/' + pasta + '/' + n + '.' + EXTENSOES[i];
+    })();
+  }
+
+  var ICONE_PASTA =
+    '<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+    ' stroke-width="1.1" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2l2 2h8.8A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-10Z"/></svg>';
+  var SETA = '<svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor"' +
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4 2l4 4-4 4"/></svg>';
+
+  /* ── tela 1: pastas ───────────────────────────────────────────── */
+  var grade = document.getElementById('gradePastas');
+  PROCEDIMENTOS.forEach(function (p) {
+    var a = document.createElement('a');
+    a.className = 'pasta';
+    a.href = '#' + p.pasta;
+    a.id = 'pasta-' + p.pasta;
+    a.innerHTML = ICONE_PASTA +
+      '<span class="texto">' +
+        '<span class="nome"></span>' +
+        (p.sub ? '<span class="sub"></span>' : '') +
+        '<span class="ver">Ver casos ' + SETA + '</span>' +
+      '</span>';
+    a.querySelector('.nome').textContent = p.nome;
+    if (p.sub) a.querySelector('.sub').textContent = p.sub;
+    grade.appendChild(a);
+    medir(a.id, 'VerPasta_' + p.pasta, false);
+
+    /* a foto 1 vira capa */
+    acharFoto(p.pasta, 1, function (img) {
+      if (!img) return;
+      img.className = 'capa';
+      img.alt = '';
+      a.insertBefore(img, a.firstChild);
+      a.classList.add('com-capa');
+    });
+  });
+
+  /* ── tela 2: galeria ──────────────────────────────────────────── */
+  var telaPastas  = document.getElementById('telaPastas');
+  var telaGaleria = document.getElementById('telaGaleria');
+  var galeria     = document.getElementById('galeria');
+  var vazio       = document.getElementById('vazio');
+  var fotos = [];
+  var geracao = 0;   /* troca de pasta no meio do carregamento: descarta o antigo */
+
+  function abrirPasta(p) {
+    var minha = ++geracao;
+    fotos = [];
+    galeria.innerHTML = '';
+    vazio.hidden = true;
+    document.getElementById('galeriaTitulo').textContent = p.nome;
+    document.getElementById('galeriaSub').textContent = p.sub || '';
+    document.title = p.nome + ' · Antes e depois · Dr. Angelo Tirado';
+
+    (function proxima(n) {
+      if (n > LIMITE) return;
+      acharFoto(p.pasta, n, function (img) {
+        if (minha !== geracao) return;
+        if (!img) { if (n === 1) vazio.hidden = false; return; }
+        var indice = fotos.length;
+        fotos.push(img.src);
+        img.alt = p.nome + ' — caso ' + n;
+        var bt = document.createElement('button');
+        bt.type = 'button';
+        bt.setAttribute('aria-label', 'Ampliar ' + img.alt);
+        bt.appendChild(img);
+        bt.addEventListener('click', function () { abrirVisor(indice); });
+        galeria.appendChild(bt);
+        proxima(n + 1);
+      });
+    })(1);
+  }
+
+  function rota() {
+    var id = location.hash.slice(1);
+    var p = PROCEDIMENTOS.filter(function (x) { return x.pasta === id; })[0];
+    fecharVisor();
+    if (p) {
+      telaPastas.hidden = true;
+      telaGaleria.hidden = false;
+      abrirPasta(p);
+    } else {
+      geracao++;
+      telaGaleria.hidden = true;
+      telaPastas.hidden = false;
+      document.title = 'Antes e depois · Dr. Angelo Tirado';
+    }
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', rota);
+
+  /* ── visualizador ─────────────────────────────────────────────── */
+  var visor    = document.getElementById('visor');
+  var visorImg = document.getElementById('visorImg');
+  var contador = document.getElementById('visorContador');
+  var atual = 0, ultimoFoco = null;
+
+  function mostrar(i) {
+    atual = (i + fotos.length) % fotos.length;
+    visorImg.src = fotos[atual];
+    visorImg.alt = 'Foto ' + (atual + 1) + ' de ' + fotos.length;
+    contador.textContent = (atual + 1) + ' / ' + fotos.length;
+  }
+  function abrirVisor(i) {
+    ultimoFoco = document.activeElement;
+    visor.classList.toggle('unica', fotos.length < 2);
+    mostrar(i);
+    visor.classList.add('aberto');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('visorFechar').focus();
+  }
+  function fecharVisor() {
+    if (!visor.classList.contains('aberto')) return;
+    visor.classList.remove('aberto');
+    document.body.style.overflow = '';
+    if (ultimoFoco) ultimoFoco.focus();
+  }
+  document.getElementById('visorFechar').addEventListener('click', fecharVisor);
+  document.getElementById('visorAnt').addEventListener('click', function () { mostrar(atual - 1); });
+  document.getElementById('visorProx').addEventListener('click', function () { mostrar(atual + 1); });
+  visor.addEventListener('click', function (e) { if (e.target === visor) fecharVisor(); });
+  document.addEventListener('keydown', function (e) {
+    if (!visor.classList.contains('aberto')) return;
+    if (e.key === 'Escape') fecharVisor();
+    else if (e.key === 'ArrowLeft') mostrar(atual - 1);
+    else if (e.key === 'ArrowRight') mostrar(atual + 1);
+  });
+
+  /* arrastar para o lado troca a foto */
+  var x0 = null;
+  visor.addEventListener('pointerdown', function (e) { x0 = e.clientX; });
+  visor.addEventListener('pointerup', function (e) {
+    if (x0 === null || fotos.length < 2) return;
+    var dx = e.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 50) mostrar(atual + (dx < 0 ? 1 : -1));
+  });
+
+  rota();
+})();
+</script>
+
+</body>
+</html>

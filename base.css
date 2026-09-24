@@ -1,0 +1,208 @@
+/* ══════════════════════════════════════════════════════════════════
+   Base compartilhada pelas duas paginas (index.html e resultados.html):
+   cores, fundo, botoes, rodape e animacoes.
+
+   Cor: quer o dourado mais claro ou mais escuro? Mexa em --ouro.
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  /* ── ouro ─────────────────────────────────────────────────────── */
+  --ouro-luz:  #fbeccb;
+  --ouro:      #d4af5f;
+  --ouro-fund: #8f6f2e;
+  /* gradiente de folha de ouro: sao as viradas de brilho que fazem
+     o dourado parecer metal, e nao amarelo chapado */
+  --folha: linear-gradient(135deg,
+    #fbeccb 0%, #d9b769 22%, #a47d36 44%,
+    #f1d79a 62%, #c6a052 80%, #fbeccb 100%);
+
+  /* ── preto ────────────────────────────────────────────────────── */
+  --escuro: #0a0a0a;
+  --grafite:#1c1b19;
+  --cinza:  #a8a196;
+  --creme:  #f3eee4;
+
+  --curva: cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+
+body{
+  font-family:'Jost',ui-sans-serif,'Segoe UI',system-ui,sans-serif;
+  background:var(--escuro);
+  color:var(--creme);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scrollbar-width:none;
+}
+body::-webkit-scrollbar{display:none}
+
+/* ── camadas de fundo ──────────────────────────────────────────── */
+.camada{position:fixed;inset:0;pointer-events:none}
+
+/* luz dourada no alto, caindo para o preto */
+#luz{
+  bottom:auto;height:62dvh;
+  background:
+    radial-gradient(90% 70% at 50% 4%, rgba(212,175,95,.2), transparent 70%),
+    linear-gradient(180deg,#1a1917 0%,#0f0e0d 55%,var(--escuro) 100%);
+}
+
+/* halo — respira devagar */
+#halo{
+  background:radial-gradient(52% 26% at 50% 12%, rgba(251,236,203,.14), transparent 74%);
+  animation:pulsa 9s ease-in-out infinite alternate;
+}
+
+/* granulado: tira o aspecto "digital", da textura de impresso */
+#grao{
+  opacity:.06;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* moldura de ouro rente a borda — a tela vira um cartao */
+#moldura{
+  margin:calc(.5rem + env(safe-area-inset-top)) .5rem calc(.5rem + env(safe-area-inset-bottom));
+  inset:0;
+  border:1px solid transparent;
+  border-radius:1.1rem;
+  background:var(--folha) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+          mask-composite:exclude;
+  opacity:.4;
+}
+
+/* ── botoes ────────────────────────────────────────────────────── */
+a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+
+.botao{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:.9em;
+  transition:transform .35s var(--curva),box-shadow .35s var(--curva),
+             background-color .35s var(--curva),border-color .35s var(--curva);
+}
+.botao svg{flex:none}
+.botao:active{transform:scale(.977)}
+.botao .linha{display:flex;align-items:center;justify-content:center;gap:.6em}
+
+/* principal — WhatsApp, em ouro */
+.principal{
+  overflow:hidden;
+  padding:1.2em 1.2em;
+  background:var(--folha);
+  color:#1a1408;
+  box-shadow:0 .5em 1.7em rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.55);
+  animation:brilha 5.5s ease-in-out 2.4s infinite;
+}
+.principal .rotulo{
+  font-size:1em;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  white-space:nowrap;
+}
+/* varredura de luz atravessando o ouro */
+.principal::after{
+  content:"";position:absolute;top:-60%;bottom:-60%;left:-35%;width:26%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:skewX(-18deg);
+  animation:varre 5.5s ease-in-out 2.4s infinite;
+  pointer-events:none;
+}
+
+/* contorno dourado — antes e depois, catalogo */
+.contorno{
+  width:100%;
+  padding:.85em 1em;
+  border:1px solid rgba(212,175,95,.55);
+  background:rgba(212,175,95,.08);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  color:var(--ouro-luz);
+}
+.contorno .rotulo{
+  font-size:.74em;font-weight:400;
+  letter-spacing:.13em;text-transform:uppercase;white-space:nowrap;
+}
+.contorno .seta{transition:transform .35s var(--curva)}
+
+/* secundarios — Maps e Instagram */
+.secundario{
+  flex:1;
+  padding:1.05em .5em;
+  border:1px solid rgba(212,175,95,.34);
+  background:rgba(243,238,228,.05);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:var(--creme);
+}
+.secundario .linha{gap:.45em}
+.secundario .rotulo{
+  font-size:.78em;font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.secundario svg{color:var(--ouro)}
+
+@media (hover:hover){
+  .principal:hover{transform:translateY(-2px);
+    box-shadow:0 .8em 2.2em rgba(212,175,95,.28),inset 0 1px 0 rgba(255,255,255,.7)}
+  .contorno:hover{background:rgba(212,175,95,.16);border-color:var(--ouro)}
+  .contorno:hover .seta{transform:translateX(3px)}
+  .secundario:hover{background:rgba(243,238,228,.1);
+    border-color:rgba(212,175,95,.7);transform:translateY(-2px)}
+}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:.6em}
+
+/* ── rodape ────────────────────────────────────────────────────── */
+.rodape{
+  font-size:.6em;font-weight:200;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(168,161,150,.8);line-height:1.5;
+}
+.rodape .cro{display:block;color:rgba(212,175,95,.75)}
+.rodape .cro:empty{display:none}
+/* Assinatura: presente sem competir com nada. O em aqui e relativo ao
+   .rodape, que ja e .6em: por isso o piso em px, senao a assinatura
+   cairia para 5px e viraria um fio ilegivel. */
+.assinatura{
+  position:relative;
+  display:block;margin-top:.4em;
+  font-size:max(8px, .82em);font-weight:200;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(168,161,150,.5);
+  transition:color .35s var(--curva);
+}
+/* alarga a area de toque sem alterar a altura da linha */
+.assinatura::after{
+  content:"";position:absolute;
+  left:0;right:0;top:-.6em;bottom:-1em;
+}
+.assinatura b{font-weight:400;color:rgba(212,175,95,.72)}
+@media (hover:hover){
+  .assinatura:hover{color:rgba(168,161,150,.75)}
+  .assinatura:hover b{color:var(--ouro)}
+}
+
+/* ── entrada encenada ──────────────────────────────────────────── */
+.entra{opacity:0;animation:surge 1.1s var(--curva) both;
+       animation-delay:calc(var(--d,0) * 1ms)}
+
+@keyframes surge{
+  from{opacity:0;transform:translateY(15px);filter:blur(9px)}
+  to  {opacity:1;transform:none;filter:blur(0)}
+}
+@keyframes risca{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+@keyframes pulsa{from{opacity:.7}to{opacity:1}}
+@keyframes varre{0%,72%{left:-35%}100%{left:120%}}
+@keyframes brilha{
+  0%,72%,100%{box-shadow:0 .5em 1.7em rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.55)}
+  86%        {box-shadow:0 .5em 2.3em rgba(212,175,95,.4),inset 0 1px 0 rgba(255,255,255,.7)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .entra{opacity:1}
+}
