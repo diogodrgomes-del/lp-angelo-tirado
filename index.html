@@ -313,11 +313,13 @@ h1{
 
 <script src="medicao.js"></script>
 <script>
-  medir('btZap',        'Contact',          true);
-  medir('btResultados', 'VerAntesDepois',   false);
-  medir('btCatalogo',   'VerCatalogo',      false);
-  medir('btMaps',       'CliqueComoChegar', false);
-  medir('btInsta',      'CliqueInstagram',  false);
+  /* cada botao da pagina -> um evento (lista completa em medicao.js) */
+  medir('btZap',        'clique_whatsapp',     { local: 'inicio' });
+  medir('btResultados', 'clique_antes_depois');
+  medir('btCatalogo',   'clique_catalogo');
+  medir('btMaps',       'clique_como_chegar');
+  medir('btInsta',      'clique_instagram');
+  medir('btMarktiva',   'clique_marktiva');
 </script>
 
 </body>

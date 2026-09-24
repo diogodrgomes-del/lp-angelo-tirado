@@ -241,7 +241,7 @@
   <!-- ── tela 1: as pastas ─────────────────────────────────────── -->
   <section id="telaPastas">
     <div style="display:flex;flex-direction:column;gap:1.4em">
-      <a class="voltar entra" style="--d:0" href="index.html">
+      <a class="voltar entra" style="--d:0" href="index.html" id="btInicio">
         <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor"
              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
              aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg>
@@ -262,7 +262,7 @@
   <!-- ── tela 2: dentro de uma pasta ───────────────────────────── -->
   <section id="telaGaleria" hidden>
     <div style="display:flex;flex-direction:column;gap:1.4em">
-      <a class="voltar" href="#">
+      <a class="voltar" href="#" id="btProcedimentos">
         <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor"
              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"
              aria-hidden="true"><path d="M8 2 4 6l4 4"/></svg>
@@ -304,7 +304,7 @@
     <p class="rodape">Clínica Odontológica · Londrina/PR
       <!-- Mesmo CRO do rodape de index.html. Vazio, a linha some. -->
       <span class="cro">CRO 13.130/PR</span>
-      <a class="assinatura" href="https://www.instagram.com/agenciamarktiva"
+      <a class="assinatura" id="btMarktiva" href="https://www.instagram.com/agenciamarktiva"
          target="_blank" rel="noopener">Site feito por <b>Marktiva</b></a>
     </p>
   </div>
@@ -347,7 +347,15 @@
   var EXTENSOES = ['jpg', 'jpeg', 'png', 'webp'];
   var LIMITE = 60;
 
-  medir('btZap', 'Contact', true);
+  /* cada botao da pagina -> um evento (lista completa em medicao.js) */
+  medir('btInicio',        'clique_voltar', { destino: 'inicio' });
+  medir('btProcedimentos', 'clique_voltar', { destino: 'procedimentos' });
+  medir('btMarktiva',      'clique_marktiva');
+  /* o WhatsApp daqui diz de qual pasta a pessoa veio */
+  document.getElementById('btZap').addEventListener('click', function () {
+    registrar('clique_whatsapp', { local: 'antes_depois',
+      procedimento: location.hash.slice(1) || 'nenhum' });
+  });
 
   /* tenta n.jpg, n.jpeg, n.png, n.webp — devolve a primeira que abrir */
   function acharFoto(pasta, n, pronto) {
@@ -386,7 +394,7 @@
     a.querySelector('.nome').textContent = p.nome;
     if (p.sub) a.querySelector('.sub').textContent = p.sub;
     grade.appendChild(a);
-    medir(a.id, 'VerPasta_' + p.pasta, false);
+    medir(a.id, 'clique_procedimento', { procedimento: p.pasta });
 
     /* a foto 1 vira capa */
     acharFoto(p.pasta, 1, function (img) {
@@ -427,7 +435,10 @@
         bt.type = 'button';
         bt.setAttribute('aria-label', 'Ampliar ' + img.alt);
         bt.appendChild(img);
-        bt.addEventListener('click', function () { abrirVisor(indice); });
+        bt.addEventListener('click', function () {
+          registrar('ver_foto', { procedimento: p.pasta, foto: n });
+          abrirVisor(indice);
+        });
         galeria.appendChild(bt);
         proxima(n + 1);
       });
