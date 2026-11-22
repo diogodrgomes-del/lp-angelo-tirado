@@ -99,8 +99,38 @@ function hublaTracking(payload: unknown): Tracking {
   if (session && typeof session === 'object') {
     t.clientIp ??= str(session.ip ?? session.ipAddress);
     t.userAgent ??= str(session.userAgent ?? session.user_agent);
+    // cookies do pixel no checkout: paymentSession.cookies.{fbp,fbc}
+    const cookies = session.cookies as Record<string, unknown> | undefined;
+    if (cookies && typeof cookies === 'object') {
+      t.fbp ??= str(cookies.fbp ?? cookies._fbp);
+      t.fbc ??= str(cookies.fbc ?? cookies._fbc);
+    }
+    // a Hubla não tem campo de UTM: elas vêm na URL do checkout
+    const url = str(session.url);
+    if (url && url.includes('?')) {
+      try {
+        const q = new URL(url).searchParams;
+        t.utmSource ??= str(q.get('utm_source'));
+        t.utmMedium ??= str(q.get('utm_medium'));
+        t.utmCampaign ??= str(q.get('utm_campaign'));
+        t.utmContent ??= str(q.get('utm_content'));
+        t.utmTerm ??= str(q.get('utm_term'));
+        t.fbclid ??= str(q.get('fbclid'));
+        t.src ??= str(q.get('src'));
+      } catch {
+        /* URL inválida: ignora */
+      }
+    }
   }
   return t;
+}
+
+/** Quando a fatura entrou num status, pelo histórico statusAt [{status, when}]. */
+function statusWhen(payload: unknown, wanted: RegExp): Date | null {
+  const list = pick(payload, `${INV}.statusAt`);
+  if (!Array.isArray(list)) return null;
+  const hit = [...list].reverse().find((x) => wanted.test(String((x as Record<string, unknown>)?.status ?? '')));
+  return hit ? parseLocalDateTime((hit as Record<string, unknown>).when) : null;
 }
 
 function safeEq(a: string, b: string): boolean {
@@ -150,8 +180,13 @@ export const hubla: CheckoutProvider = {
       }
       const orderedAt = parseLocalDateTime(pickFirst(payload, [`${INV}.createdAt`, `${INV}.saleDate`, `${INV}.created_at`]));
       if (!orderedAt) throw new Error('data de criação da fatura ausente');
-      const paidAt = parseLocalDateTime(pickFirst(payload, [`${INV}.paidAt`, `${INV}.paid_at`, `${INV}.approvedAt`]));
-      const updatedAt = parseLocalDateTime(pickFirst(payload, [`${INV}.updatedAt`, `${INV}.refundedAt`]));
+      const paidAt =
+        parseLocalDateTime(pickFirst(payload, [`${INV}.paidAt`, `${INV}.paid_at`, `${INV}.approvedAt`])) ??
+        statusWhen(payload, /^(paid|approved|succeeded)$/i);
+      // data em que SAIU (reembolso/chargeback) — nunca usada como pagamento
+      const updatedAt =
+        statusWhen(payload, /refund|chargeback|dispute/i) ??
+        parseLocalDateTime(pickFirst(payload, [`${INV}.refundedAt`, `${INV}.updatedAt`, `${INV}.modifiedAt`]));
       const approvedLike = status === 'approved' || status === 'refunded' || status === 'chargeback';
 
       const first = str(pickFirst(payload, ['event.user.firstName', 'event.payer.firstName']));

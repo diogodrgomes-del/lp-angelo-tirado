@@ -41,6 +41,23 @@ export async function upsertSale(
   s: NormalizedSale,
   origin: 'webhook' | 'import',
 ): Promise<UpsertResult> {
+  try {
+    return await upsertOnce(platform, s, origin);
+  } catch (e) {
+    // Dois webhooks do mesmo pedido no mesmo instante (a Hubla manda
+    // "fatura criada" e "status atualizado" juntos): os dois não acham a
+    // venda e tentam criá-la. O segundo perde a corrida na chave única —
+    // aí basta repetir, agora como atualização.
+    if ((e as { code?: string }).code === 'P2002') return upsertOnce(platform, s, origin);
+    throw e;
+  }
+}
+
+async function upsertOnce(
+  platform: string,
+  s: NormalizedSale,
+  origin: 'webhook' | 'import',
+): Promise<UpsertResult> {
   const existing = await prisma.sale.findUnique({
     where: { platform_externalId: { platform, externalId: s.externalId } },
   });

@@ -111,6 +111,19 @@ describe.skipIf(!URL_)('banco: webhook, reprocesso, importação, contas', () =>
     expect(sale.grossCents).toBe(11690);
   });
 
+  it('dois webhooks do mesmo pedido ao mesmo tempo: uma venda, nenhum erro', async () => {
+    const body = kiwifyBody();
+    const [a, b] = await Promise.all([
+      m.receiveWebhook('kiwify', req('kiwify', body)),
+      m.receiveWebhook('kiwify', req('kiwify', kiwifyBody({ order_status: 'paid', approved_date: '2026-03-10 10:01' }))),
+    ]);
+    expect([a.body.result, b.body.result]).toEqual(['processed', 'processed']);
+    const sales = await m.prisma.sale.findMany();
+    expect(sales).toHaveLength(1);
+    expect(sales[0].status).toBe('approved');
+    expect(await m.prisma.webhookEvent.count({ where: { status: 'error' } })).toBe(0);
+  });
+
   it('importação convive com o webhook e é idempotente', async () => {
     await m.receiveWebhook('kiwify', req('kiwify', kiwifyBody({ order_status: 'paid', approved_date: '2026-03-10 10:01' })));
     const rows = m.parseCsv(

@@ -274,3 +274,73 @@ describe('Hubla (estrito)', () => {
     expect(hubla.verify(mk({}), 'tok-123')).toBe(false);
   });
 });
+
+describe('Hubla — formato real (invoice.created, nov/2026)', () => {
+  // estrutura copiada de um payload real; dados pessoais trocados
+  const real = {
+    type: 'invoice.created',
+    version: '2.0.0',
+    event: {
+      product: { id: 'offer-1', name: 'Novena' },
+      invoice: {
+        id: 'inv-real',
+        paymentMethod: 'pix',
+        currency: 'BRL',
+        status: 'unpaid',
+        statusAt: [{ status: 'unpaid', when: '2026-11-22T20:45:35.666Z' }],
+        paymentSession: {
+          ip: '2804::1',
+          userAgent: 'Mozilla/5.0',
+          url: 'https://pay.hub.la/offer-1?utm_source=FB&utm_campaign=Black%7C120200000000001&fbclid=IwZZ',
+          cookies: { fbp: 'fb.1.1795380174907.404940689337566439', hbId: 'x' },
+        },
+        amount: { subtotalCents: 9700, subtotal: 97, totalCents: 9700, total: 97 },
+        receivers: [
+          { id: 'platform', role: 'platform', totalCents: 1112 },
+          { id: 'seller-1', role: 'seller', totalCents: 8588 },
+        ],
+        createdAt: '2026-11-22T20:45:35.666Z',
+        modifiedAt: '2026-11-22T20:45:35.855Z',
+      },
+      user: { firstName: 'Fulano', lastName: 'Teste', email: 'fulano@x.com' },
+    },
+  };
+
+  it('pendente com total, líquido do seller, fbp dos cookies e UTM/fbclid da URL', () => {
+    const r = hubla.parse(real);
+    expect(r.kind).toBe('sale');
+    if (r.kind !== 'sale') return;
+    expect(r.sale).toMatchObject({ status: 'pending', grossCents: 9700, netCents: 8588, paymentMethod: 'pix', paidAt: null });
+    expect(r.sale.tracking.fbp).toBe('fb.1.1795380174907.404940689337566439');
+    expect(r.sale.tracking.utmSource).toBe('FB');
+    expect(r.sale.tracking.utmCampaign).toBe('Black|120200000000001');
+    expect(r.sale.tracking.fbclid).toBe('IwZZ');
+  });
+
+  it('pago: data de pagamento pelo statusAt; reembolso: data de saída pelo statusAt', () => {
+    const paid = {
+      ...real,
+      type: 'invoice.payment_succeeded',
+      event: {
+        ...real.event,
+        invoice: {
+          ...real.event.invoice,
+          status: 'paid',
+          statusAt: [
+            { status: 'unpaid', when: '2026-11-22T20:45:35.666Z' },
+            { status: 'paid', when: '2026-11-23T01:10:00.000Z' },
+          ],
+        },
+      },
+    };
+    const r = hubla.parse(paid);
+    expect(r.kind === 'sale' && r.sale.paidAt!.toISOString()).toBe('2026-11-23T01:10:00.000Z');
+
+    const refunded = structuredClone(paid);
+    refunded.type = 'invoice.refunded';
+    refunded.event.invoice.status = 'refunded';
+    refunded.event.invoice.statusAt.push({ status: 'refunded', when: '2026-11-30T15:00:00.000Z' });
+    const r2 = hubla.parse(refunded);
+    expect(r2.kind === 'sale' && r2.sale.refundedAt!.toISOString()).toBe('2026-11-30T15:00:00.000Z');
+  });
+});
