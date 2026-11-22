@@ -64,7 +64,8 @@ export async function verifySession(
 /** E-mails permitidos, lidos de AUTH_USERS sem depender de node:crypto (edge). */
 export function allowedEmails(raw = process.env.AUTH_USERS): Set<string> {
   try {
-    const list = JSON.parse(raw ?? '[]');
+    const clean = (raw ?? '[]').trim().replace(/^`+|`+$/g, '').replace(/[\u201C\u201D\u201E\u2033]/g, '"');
+    const list = JSON.parse(clean);
     return new Set(
       Array.isArray(list) ? list.map((u: { email?: unknown }) => String(u?.email ?? '').trim().toLowerCase()) : [],
     );

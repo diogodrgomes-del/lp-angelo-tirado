@@ -38,7 +38,7 @@ const N = 16384, r = 8, p = 1;
 const salt = randomBytes(16);
 scrypt(pass, salt, 64, { N, r, p, maxmem: 256 * N * r }, (err, key) => {
   if (err) throw err;
-  const hash = ['scrypt', N, r, p, salt.toString('base64'), key.toString('base64')].join('$');
+  const hash = ['scrypt', N, r, p, salt.toString('base64'), key.toString('base64')].join(':');
   console.log('\nAdicione este objeto à lista em AUTH_USERS:\n');
   console.log(JSON.stringify({ email, hash }));
 });

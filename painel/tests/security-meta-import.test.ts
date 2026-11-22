@@ -31,6 +31,13 @@ describe('login', () => {
     expect(await checkCredentials('a@b.com', 'errada', users)).toBeNull();
     expect(await checkCredentials('outro@b.com', 's3nha-forte', users)).toBeNull();
     expect(loadUsers('não é json')).toEqual([]);
+    // formato novo, sem "$" (que o build pode expandir e corromper)
+    expect(hash.startsWith('scrypt:')).toBe(true);
+    expect(hash).not.toContain('$');
+    // aspas curvas e crases coladas por engano
+    const curly = '`[{\u201Cemail\u201D:\u201Ca@b.com\u201D,\u201Chash\u201D:\u201C' + hash + '\u201D}]`';
+    expect(await checkCredentials('a@b.com', 's3nha-forte', loadUsers(curly))).toBe('a@b.com');
+    expect(allowedEmails(curly).has('a@b.com')).toBe(true);
   });
 
   it('sessão assinada: adulterada ou expirada é recusada', async () => {
