@@ -153,3 +153,24 @@ describe('importação de histórico', () => {
     expect(parseStatus('Reembolso solicitado')).toBe('refunded');
   });
 });
+
+describe('importação — colunas da Hubla', () => {
+  it('reconhece ID da fatura, Data da criação e Receita líquida', () => {
+    const rows = parseCsv(
+      'Valor total;Status;ID da fatura;Cliente;Produto;Data da criação;Receita líquida;Método de pagamento\n' +
+        'R$ 97,00;Paga;6f286f23-aaaa;Genezio;Novena;22/11/2026 10:15;R$ 85,88;Pix\n' +
+        'R$ 97,00;Paga;b52bd717-bbbb;Darcilia;Novena;21/11/2026 21:40;R$ 85,88;Cartão de crédito\n',
+    );
+    const { map, missing } = resolveColumns(Object.keys(rows[0]));
+    expect(missing).toEqual([]);
+    expect(map.id).toBe('ID da fatura');
+    const { sales, errors } = rowsToSales(rows, map);
+    expect(errors).toEqual([]);
+    expect(sales.map((s) => [s.externalId, s.grossCents, s.netCents, s.paymentMethod])).toEqual([
+      ['6f286f23-aaaa', 9700, 8588, 'pix'],
+      ['b52bd717-bbbb', 9700, 8588, 'card'],
+    ]);
+    // 21h40 de Brasília continua no dia 21
+    expect(sales[1].paidAt!.toISOString()).toBe('2026-11-22T00:40:00.000Z');
+  });
+});

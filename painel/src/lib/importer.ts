@@ -26,18 +26,18 @@ export function normHeader(h: string): string {
 
 /** Colunas aceitas para cada campo, por nome normalizado. Ordem = prioridade. */
 export const COLUMNS: Record<string, string[]> = {
-  id: ['id da venda', 'id do pedido', 'order id', 'pedido', 'id pedido', 'codigo da venda', 'codigo', 'id transacao', 'transacao', 'id'],
+  id: ['id da fatura', 'fatura', 'invoice id', 'id da venda', 'id do pedido', 'order id', 'pedido', 'id pedido', 'codigo da venda', 'codigo', 'id transacao', 'transacao', 'id'],
   status: ['status', 'status da venda', 'status do pedido', 'situacao'],
   method: ['metodo de pagamento', 'forma de pagamento', 'pagamento', 'payment method', 'metodo'],
   product: ['produto', 'nome do produto', 'product', 'oferta'],
   productId: ['id do produto', 'product id', 'codigo do produto'],
-  customer: ['cliente', 'nome do cliente', 'comprador', 'nome', 'customer'],
-  email: ['email', 'e mail', 'email do cliente', 'e mail do cliente'],
+  customer: ['cliente', 'nome do cliente', 'comprador', 'nome do comprador', 'nome', 'customer'],
+  email: ['email', 'e mail', 'email do cliente', 'e mail do cliente', 'email do comprador', 'e mail do comprador'],
   phone: ['telefone', 'celular', 'whatsapp', 'phone'],
   gross: ['valor total', 'valor cobrado', 'valor bruto', 'total', 'valor da venda', 'preco', 'valor'],
-  net: ['valor liquido', 'liquido', 'sua comissao', 'minha comissao', 'comissao', 'valor recebido', 'net'],
-  ordered: ['data de criacao', 'data do pedido', 'criado em', 'data da venda', 'data', 'created at'],
-  paid: ['data de aprovacao', 'data do pagamento', 'data de pagamento', 'aprovado em', 'pago em', 'approved date'],
+  net: ['receita liquida', 'receita liquida da fatura', 'valor liquido', 'liquido', 'valor recebido pelo vendedor', 'sua comissao', 'minha comissao', 'comissao', 'valor recebido', 'net'],
+  ordered: ['data da criacao', 'data de criacao', 'data da fatura', 'data do pedido', 'criado em', 'data da venda', 'data', 'created at'],
+  paid: ['data de aprovacao', 'data da aprovacao', 'data do pagamento', 'data de pagamento', 'data da pagamento', 'pago em data', 'aprovado em', 'pago em', 'approved date'],
   refunded: ['data do reembolso', 'reembolsado em', 'data de reembolso'],
 };
 
