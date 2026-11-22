@@ -147,7 +147,7 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
             <summary className="cursor-pointer text-[15px] text-texto/80 hover:text-texto">Usar um token permanente (System User)</summary>
             <div className="mt-3 space-y-2 text-sm leading-relaxed text-suave">
               <p>
-                Business Manager → Configurações do negócio → Usuários do sistema → Adicionar (função Admin) → Atribuir ativos: a conta de
+                Business Manager → Configurações do negócio → Usuários do sistema → Adicionar (função Funcionário basta) → Atribuir ativos: a conta de
                 anúncio, permissão &quot;Ver desempenho&quot; → Gerar novo token, com o app e a permissão <code>ads_read</code>, validade
                 &quot;Nunca&quot;.
               </p>
