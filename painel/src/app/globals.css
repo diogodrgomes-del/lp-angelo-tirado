@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --serie-faturamento: #3987e5;
+  --serie-gasto: #d95926;
+  --serie-lucro: #199e70;
+}
+
+html,
+body {
+  background: #0e1528;
+  color: #e6ebf5;
+}
+
+body {
+  font-feature-settings: 'tnum' 1;
+}
+
+@layer components {
+  .cartao {
+    @apply rounded-xl border border-borda bg-cartao;
+  }
+  .rotulo {
+    @apply text-sm text-suave;
+  }
+  .campo {
+    @apply w-full rounded-lg border border-borda bg-cartao2 px-4 py-2.5 text-[15px] text-texto outline-none transition focus:border-destaque;
+  }
+  .botao {
+    @apply inline-flex items-center justify-center rounded-lg bg-destaque px-5 py-2.5 text-[15px] font-semibold text-white transition hover:bg-destaqueHover disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .botao-sec {
+    @apply inline-flex items-center justify-center rounded-lg border border-borda bg-cartao2 px-4 py-2 text-sm text-texto transition hover:border-suave disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .tabela th {
+    @apply whitespace-nowrap px-4 py-3.5 text-xs font-medium uppercase tracking-wider text-suave;
+    text-align: left;
+  }
+  .tabela th.text-right {
+    text-align: right;
+  }
+  .tabela td {
+    @apply whitespace-nowrap border-t border-borda px-4 py-3 text-sm;
+  }
+}
+
+select.campo {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23c3cbe0' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}

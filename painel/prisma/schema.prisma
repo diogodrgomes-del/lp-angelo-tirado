@@ -1,0 +1,158 @@
+// Todo valor em dinheiro é INTEIRO em centavos (BigInt não é necessário:
+// Int vai até R$ 21 milhões por linha; somas são feitas em JS com Number,
+// seguras até R$ 90 trilhões).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Uma linha por plataforma: "meta_ads" e cada checkout habilitado em
+/// CHECKOUT_PLATFORMS. Criadas pelo bootstrap; nunca pelo webhook.
+model Integration {
+  id            String    @id // "meta_ads" | "wiapy" | "kiwify"
+  enabled       Boolean   @default(true)
+  /// Credencial cifrada (AES-256-GCM). Nunca sai do servidor.
+  credentials   String?
+  /// Segredo do webhook, cifrado. Nunca sai do servidor.
+  webhookSecret String?
+  /// "user" (expira) ou "system_user" (não expira) — só Meta.
+  tokenKind     String?
+  tokenExpiresAt DateTime?
+  status        String    @default("disconnected") // disconnected | ok | error
+  lastSyncAt    DateTime?
+  lastError     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AdAccount {
+  id          String     @id // "act_123"
+  platform    String     @default("meta_ads")
+  name        String
+  currency    String     @default("BRL")
+  timezone    String?
+  /// Só contas ativas entram em gasto, ROAS e lucro.
+  active      Boolean    @default(false)
+  balanceCents Int?
+  lastError   String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  campaigns   Campaign[]
+}
+
+model Campaign {
+  id          String          @id // id da campanha na Meta
+  adAccountId String
+  adAccount   AdAccount       @relation(fields: [adAccountId], references: [id], onDelete: Cascade)
+  name        String
+  status      String?
+  updatedAt   DateTime        @updatedAt
+  daily       CampaignDaily[]
+
+  @@index([adAccountId])
+}
+
+/// Gasto diário por campanha, no fuso da conta de anúncio.
+model CampaignDaily {
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  /// "YYYY-MM-DD"
+  date        String
+  spendCents  Int
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@id([campaignId, date])
+  @@index([date])
+}
+
+model Sale {
+  id            String    @id @default(cuid())
+  platform      String
+  /// ID do PEDIDO na plataforma — o que sobrevive à mudança de status.
+  externalId    String
+  /// approved | pending | refused | refunded | chargeback | canceled
+  status        String
+  /// card | pix | boleto | other
+  paymentMethod String
+  productId     String?
+  productName   String
+  customerName  String?
+  customerEmail String?
+  customerPhone String?
+  /// Valor cobrado do comprador (com orderbump), em centavos.
+  grossCents    Int
+  /// Quanto fica com o produtor, em centavos. PODE SER NEGATIVO.
+  netCents      Int
+  orderedAt     DateTime
+  paidAt        DateTime?
+  refundedAt    DateTime?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
+  src           String?
+  fbclid        String?
+  fbc           String?
+  fbp           String?
+  clientIp      String?
+  userAgent     String?
+  /// Id da campanha Meta extraído do utm_campaign ("Nome|123").
+  campaignId    String?
+  /// "webhook" | "import"
+  origin        String    @default("webhook")
+  capiSentAt    DateTime?
+  capiError     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([platform, externalId])
+  @@index([paidAt])
+  @@index([orderedAt])
+  @@index([status])
+}
+
+/// Payload cru, gravado ANTES de qualquer processamento.
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  platform   String
+  receivedAt DateTime @default(now())
+  eventName  String?
+  rawBody    String
+  /// received | processed | ignored | error | rejected
+  status     String   @default("received")
+  error      String?
+  externalId String?
+
+  @@index([platform, receivedAt])
+}
+
+model ProductCost {
+  /// "<plataforma>:<id do produto>" ou "<plataforma>:name:<nome>"
+  key       String   @id
+  name      String
+  costCents Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model LoginAttempt {
+  id     String   @id @default(cuid())
+  ip     String
+  at     DateTime @default(now())
+  ok     Boolean
+
+  @@index([ip, at])
+}
