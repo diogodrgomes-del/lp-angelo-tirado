@@ -8,7 +8,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  /// Conexão direta (sem pool) para as migrações. A Neon cria as duas.
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 /// Uma linha por plataforma: "meta_ads" e cada checkout habilitado em
