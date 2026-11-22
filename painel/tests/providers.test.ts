@@ -193,3 +193,84 @@ describe('rastreamento', () => {
     expect(trafficSource({ utmSource: 'google', fbclid: null })).toBe('Google');
   });
 });
+
+import { hubla } from '@/lib/providers/hubla';
+
+describe('Hubla (estrito)', () => {
+  const pago = {
+    type: 'invoice.payment_succeeded',
+    version: '2.0.0',
+    event: {
+      product: { id: 'prod-1', name: 'Religioso' },
+      invoice: {
+        id: 'inv-1',
+        status: 'paid',
+        paymentMethod: 'pix',
+        amount: { subtotalCents: 9700, discountCents: 0, totalCents: 11690 },
+        createdAt: '2026-03-10T23:30:00.000Z',
+        paidAt: '2026-03-11T00:30:00.000Z',
+        receivers: [
+          { role: 'platform', totalCents: 990 },
+          { role: 'seller', totalCents: 10700 },
+        ],
+        paymentSession: {
+          utm: { source: 'FB', medium: 'paid', campaign: 'Camp|120200000000001', content: 'ad1' },
+          ip: '1.2.3.4',
+          userAgent: 'Mozilla',
+        },
+      },
+      user: { firstName: 'Ana', lastName: 'Souza', email: 'ANA@X.COM', phone: '+5511999998888' },
+    },
+  };
+
+  it('mapeia fatura paga: total, líquido do vendedor, data com fuso, utm sem prefixo', () => {
+    const r = hubla.parse(pago);
+    expect(r.kind).toBe('sale');
+    if (r.kind !== 'sale') return;
+    expect(r.sale).toMatchObject({ externalId: 'inv-1', status: 'approved', grossCents: 11690, netCents: 10700, paymentMethod: 'pix' });
+    expect(r.sale.paidAt!.toISOString()).toBe('2026-03-11T00:30:00.000Z');
+    expect(r.sale.tracking.utmCampaign).toBe('Camp|120200000000001');
+    expect(r.sale.tracking.utmSource).toBe('FB');
+    expect(r.sale.tracking.userAgent).toBe('Mozilla');
+    expect(r.sale.customerName).toBe('Ana Souza');
+    expect(r.sale.customerEmail).toBe('ana@x.com');
+  });
+
+  it('lead / carrinho abandonado e assinatura são ignorados', () => {
+    expect(hubla.parse({ type: 'lead.abandoned_checkout', event: { invoice: { id: 'x', amount: { totalCents: 1 } } } }).kind).toBe('ignored');
+    expect(hubla.parse({ type: 'subscription.activated', event: {} }).kind).toBe('ignored');
+    expect(hubla.parse({ type: 'customer.member_added', event: {} }).kind).toBe('ignored');
+  });
+
+  it('reembolso: sem data de pagamento nova; data do reembolso pelo updatedAt', () => {
+    const inv = { ...pago.event.invoice, status: 'refunded', paidAt: undefined, updatedAt: '2026-03-20T13:00:00.000Z' };
+    const r = hubla.parse({ ...pago, type: 'invoice.refunded', event: { ...pago.event, invoice: inv } });
+    expect(r.kind === 'sale' && r.sale.status).toBe('refunded');
+    expect(r.kind === 'sale' && r.sale.paidAt).toBeNull();
+    expect(r.kind === 'sale' && r.sale.refundedAt!.toISOString()).toBe('2026-03-20T13:00:00.000Z');
+  });
+
+  it('pendente não tem data de pagamento; status pelo tipo quando falta', () => {
+    const inv = { ...pago.event.invoice, status: undefined, paidAt: undefined };
+    const r = hubla.parse({ ...pago, type: 'invoice.created', event: { ...pago.event, invoice: inv } });
+    expect(r.kind === 'sale' && r.sale.status).toBe('pending');
+    expect(r.kind === 'sale' && r.sale.paidAt).toBeNull();
+  });
+
+  it('sem líquido do vendedor: erro, nada gravado', () => {
+    const inv = { ...pago.event.invoice, receivers: [{ role: 'platform', totalCents: 990 }] };
+    expect(hubla.parse({ ...pago, event: { ...pago.event, invoice: inv } }).kind).toBe('error');
+  });
+
+  it('valor sem "Cents" no nome não é lido (unidade nunca adivinhada)', () => {
+    const inv = { ...pago.event.invoice, amount: { total: 116.9 } };
+    expect(hubla.parse({ ...pago, event: { ...pago.event, invoice: inv } }).kind).toBe('error');
+  });
+
+  it('token no cabeçalho x-hubla-token', () => {
+    const mk = (h: Record<string, string>) => ({ rawBody: '{}', headers: new Headers(h), url: new URL('https://x/') });
+    expect(hubla.verify(mk({ 'x-hubla-token': 'tok-123' }), 'tok-123')).toBe(true);
+    expect(hubla.verify(mk({ 'x-hubla-token': 'errado' }), 'tok-123')).toBe(false);
+    expect(hubla.verify(mk({}), 'tok-123')).toBe(false);
+  });
+});

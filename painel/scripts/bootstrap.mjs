@@ -6,7 +6,7 @@
 import { createHash } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
-const KNOWN = ['wiapy', 'kiwify'];
+const KNOWN = ['hubla', 'wiapy', 'kiwify'];
 const prisma = new PrismaClient();
 
 function fail(msg) {
