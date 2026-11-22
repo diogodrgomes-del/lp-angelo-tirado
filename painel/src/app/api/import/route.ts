@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       errors,
       byStatus,
       approvedNetCents: sales.filter((s) => s.status === 'approved').reduce((t, s) => t + s.netCents, 0),
+      withCampaign: sales.filter((s) => s.tracking.utmCampaign).length,
     });
   }
 

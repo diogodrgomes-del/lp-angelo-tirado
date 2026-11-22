@@ -174,3 +174,46 @@ describe('importação — colunas da Hubla', () => {
     expect(sales[1].paidAt!.toISOString()).toBe('2026-11-22T00:40:00.000Z');
   });
 });
+
+describe('importação — exportação real da Hubla (cabeçalhos de nov/2026)', () => {
+  const header =
+    'ID da fatura;Tipo de fatura;Status da fatura;Método de pagamento;Data de criação;Data de pagamento;Data de reembolso;' +
+    'Nome da oferta;ID do produto;Nome do produto;Nome do cliente;Email do cliente;Telefone do cliente;Valor total;' +
+    'Taxa Hubla variável;Valor Líquido;Valor da sua comissão;UTM Origem;UTM Mídia;UTM Campanha;UTM Conteúdo;UTM Termo;' +
+    'Cookie fbclid;Cookie fbp;Cookie fbc;URL de Compra';
+  const csv =
+    header + '\n' +
+    'inv-1;sell;Paga;pix;21/11/2026 21:40;21/11/2026 21:42;;Oferta;prod-1;Novena;Darcilia;d@x.com;+5511;97,00;11,12;85,88;80,00;FB;paid;STAGE03|120200000000001;ad1;;IwZZ;fb.1.1.2;;https://pay.hub.la/x\n' +
+    'inv-2;sell;unpaid;pix;22/11/2026 10:00;;;Oferta;prod-1;Novena;Hery;h@x.com;;97,00;;;;;;;;;;;;\n';
+
+  it('mapeia status da fatura, sua comissão (não o líquido total) e UTM/cookies reais', () => {
+    const rows = parseCsv(csv);
+    const { map, missing } = resolveColumns(Object.keys(rows[0]));
+    expect(missing).toEqual([]);
+    expect([map.status, map.net, map.ordered, map.paid]).toEqual([
+      'Status da fatura',
+      'Valor da sua comissão',
+      'Data de criação',
+      'Data de pagamento',
+    ]);
+    const { sales, errors } = rowsToSales(rows, map);
+    expect(errors).toEqual([]);
+    expect(sales[1]).toMatchObject({ externalId: 'inv-2', status: 'pending', netCents: 0, paidAt: null });
+    const s = sales[0];
+    expect(s).toMatchObject({ externalId: 'inv-1', status: 'approved', grossCents: 9700, netCents: 8000, productId: 'prod-1' });
+    expect(s.paidAt!.toISOString()).toBe('2026-11-22T00:42:00.000Z');
+    expect(s.tracking).toMatchObject({ utmSource: 'FB', utmCampaign: 'STAGE03|120200000000001', fbclid: 'IwZZ', fbp: 'fb.1.1.2', utmTerm: null });
+  });
+
+  it('paga sem líquido continua sendo erro (não grava R$ 0 de receita)', () => {
+    const rows = parseCsv(header + '\ninv-3;sell;Paga;pix;21/11/2026 10:00;21/11/2026 10:01;;O;p;N;C;c@x;;97,00;;;;;;;;;;;;\n');
+    const { map } = resolveColumns(Object.keys(rows[0]));
+    expect(rowsToSales(rows, map).errors).toEqual([{ line: 2, error: 'Valor ausente' }]);
+  });
+
+  it('"unpaid" é pendente, não paga (contém "paid")', () => {
+    expect(parseStatus('unpaid')).toBe('pending');
+    expect(parseStatus('Não paga')).toBe('pending');
+    expect(parseStatus('paid')).toBe('approved');
+  });
+});

@@ -13,6 +13,7 @@ interface Preview {
   errors?: { line: number; error: string }[];
   byStatus?: Record<string, number>;
   approvedNetCents?: number;
+  withCampaign?: number;
   created?: number;
   skipped?: number;
   updated?: number;
@@ -78,6 +79,9 @@ export default function ImportForm({ platforms }: { platforms: { id: string; lab
             {preview.valid} de {preview.total} linha(s) válidas · aprovadas somam <strong>{brl(preview.approvedNetCents ?? 0)}</strong> líquido
           </p>
           <p className="text-suave">
+            Com utm_campaign: {preview.withCampaign ?? 0} de {preview.valid}
+          </p>
+          <p className="text-suave">
             Por status:{' '}
             {Object.entries(preview.byStatus ?? {})
               .map(([k, v]) => `${k} ${v}`)
@@ -102,8 +106,8 @@ export default function ImportForm({ platforms }: { platforms: { id: string; lab
             </details>
           )}
           <p className="text-suave">
-            Confira o total com a exportação antes de confirmar. Vendas que já vieram pelo webhook não são alteradas. Nenhuma venda
-            importada recebe campanha (a exportação não traz UTM).
+            Confira o total com a exportação antes de confirmar. Vendas que já vieram pelo webhook não são alteradas. Campanha só
+            quando a exportação traz a UTM — nunca inventada.
           </p>
           <button type="button" className="botao" disabled={busy || !preview.valid} onClick={() => send('commit')}>
             {busy ? 'Importando…' : `Importar ${preview.valid} venda(s)`}

@@ -359,7 +359,7 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
       {/* ── Importação ─────────────────────────────────────────── */}
       <Card
         title="Importar histórico"
-        desc="O webhook só entrega o que acontece daqui para frente. Importe a exportação de vendas (CSV ou XLSX) da plataforma: mesmo id do webhook, então pode importar de novo sem duplicar. Datas lidas no horário de Brasília. Sem UTM: as vendas importadas ficam sem campanha."
+        desc="O webhook só entrega o que acontece daqui para frente. Importe a exportação de vendas (CSV ou XLSX) da plataforma: mesmo id do webhook, então pode importar de novo sem duplicar. Datas lidas no horário de Brasília. UTM e cookies entram só quando a exportação os traz (a da Hubla traz); sem eles, a venda fica sem campanha."
       >
         <div className="mt-5">
           <ImportForm platforms={platforms.map((id) => ({ id, label: ALL_PROVIDERS[id].label }))} />
